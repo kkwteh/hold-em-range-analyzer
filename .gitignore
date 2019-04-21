@@ -1,3 +1,14 @@
+# dependencies
+frontend/node_modules
+backend/vendor
+
+# production
+build
+
+# misc
+.DS_Store
+npm-debug.log
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
@@ -10,3 +21,4 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+

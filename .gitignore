@@ -15,6 +15,7 @@ npm-debug.log
 *.dll
 *.so
 *.dylib
+handrank
 
 # Test binary, build with `go test -c`
 *.test

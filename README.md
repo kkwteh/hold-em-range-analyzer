@@ -4,7 +4,6 @@ Tool to analyze hand ranges in Texas Hold'em Poker by Kevin Teh.
 
 ![Hold'em Range Analzyer](https://raw.githubusercontent.com/kkwteh/hold-em-range-analyzer/master/hold-em-preview.png)
 
-
 # Quick start
 
 Use the tool to analyze a hand using the following steps:

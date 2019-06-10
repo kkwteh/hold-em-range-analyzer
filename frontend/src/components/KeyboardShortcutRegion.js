@@ -228,6 +228,12 @@ const issueKeyboardShortcut = (
       }
       let randomIndex = Math.floor(Math.random() * heroRangeList.length);
       dispatch(change("card", "board", ""));
+      dispatch(updateSlider("hero", "flop", [0, 100]));
+      dispatch(updateSlider("opponent", "flop", [0, 100]));
+      dispatch(updateSlider("hero", "turn", [0, 100]));
+      dispatch(updateSlider("opponent", "turn", [0, 100]));
+      dispatch(updateSlider("hero", "river", [0, 100]));
+      dispatch(updateSlider("opponent", "river", [0, 100]));
       dispatch(change("card", "hero", heroRangeList[randomIndex]));
       return;
     case 77: //M

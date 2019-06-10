@@ -30,7 +30,8 @@ class KeyboardShortcutRegion extends React.Component {
         onKeyDown={this.props.handleKeyDown(
           this.props.isActive,
           this.props.heroField,
-          this.props.boardField
+          this.props.boardField,
+          this.props.heroRange
         )}
         onKeyUp={this.props.handleKeyUp}
         tabIndex={0}
@@ -43,7 +44,7 @@ class KeyboardShortcutRegion extends React.Component {
 
 const mapDispatchToProps = dispatch => {
   return {
-    handleKeyDown: (isActive, heroField, boardField) => event => {
+    handleKeyDown: (isActive, heroField, boardField, heroRange) => event => {
       if (event.ctrlKey && isActive) {
         dispatch(turnOnHeroEditor());
         console.log("Hero field mode ON");
@@ -71,7 +72,13 @@ const mapDispatchToProps = dispatch => {
           );
         }
       } else if (isActive) {
-        issueKeyboardShortcut(dispatch, event.keyCode);
+        issueKeyboardShortcut(
+          dispatch,
+          event.keyCode,
+          heroField,
+          boardField,
+          heroRange
+        );
       }
     },
     handleKeyUp: event => {
@@ -90,7 +97,8 @@ const mapDispatchToProps = dispatch => {
 const mapStateToProps = (state, ownProps) => ({
   isActive: state.keyboard.available,
   heroField: ((state.form.card || {}).values || {}).hero || "",
-  boardField: ((state.form.card || {}).values || {}).board || ""
+  boardField: ((state.form.card || {}).values || {}).board || "",
+  heroRange: state.ranges.hero.preflop.handStates || {}
 });
 
 const preflopRangeActions = {
@@ -116,7 +124,68 @@ const preflopRangeActions = {
   80: { range: [97, 100], desc: "Very tight uncapped", player: "opponent" } //P
 };
 
-const issueKeyboardShortcut = (dispatch, keyCode) => {
+const fullDeck = [
+  "As",
+  "Ah",
+  "Ad",
+  "Ac",
+  "Ks",
+  "Kh",
+  "Kd",
+  "Kc",
+  "Qs",
+  "Qh",
+  "Qd",
+  "Qc",
+  "Js",
+  "Jh",
+  "Jd",
+  "Jc",
+  "Ts",
+  "Th",
+  "Td",
+  "Tc",
+  "9s",
+  "9h",
+  "9d",
+  "9c",
+  "8s",
+  "8h",
+  "8d",
+  "8c",
+  "7s",
+  "7h",
+  "7d",
+  "7c",
+  "6s",
+  "6h",
+  "6d",
+  "6c",
+  "5s",
+  "5h",
+  "5d",
+  "5c",
+  "4s",
+  "4h",
+  "4d",
+  "4c",
+  "3s",
+  "3h",
+  "3d",
+  "3c",
+  "2s",
+  "2h",
+  "2d",
+  "2c"
+];
+
+const issueKeyboardShortcut = (
+  dispatch,
+  keyCode,
+  heroField,
+  boardField,
+  heroRange
+) => {
   var actionParams;
   if (new Set(Object.keys(preflopRangeActions)).has(keyCode.toString())) {
     actionParams = preflopRangeActions[keyCode];
@@ -149,6 +218,33 @@ const issueKeyboardShortcut = (dispatch, keyCode) => {
       dispatch(requestRangeSort("hero", "river"));
       dispatch(requestRangeSort("opponent", "river"));
       dispatch(scrollToRangeForm("heroriver"));
+      return;
+    case 78: //N
+      let heroRangeList = [];
+      for (let [hand, rangeState] of Object.entries(heroRange)) {
+        if (rangeState === "on") {
+          heroRangeList.push(hand);
+        }
+      }
+      let randomIndex = Math.floor(Math.random() * heroRangeList.length);
+      dispatch(change("card", "board", ""));
+      dispatch(change("card", "hero", heroRangeList[randomIndex]));
+      return;
+    case 77: //M
+      console.log("hero field", heroField);
+      let boardCards = [];
+      while (boardCards.length < 5) {
+        let randomIndex = Math.floor(Math.random() * fullDeck.length);
+        let randomCard = fullDeck[randomIndex];
+        if (
+          !heroField.includes(randomCard) &&
+          !boardCards.includes(randomCard)
+        ) {
+          boardCards.push(randomCard);
+        }
+      }
+      console.log("random board", boardCards.join());
+      dispatch(change("card", "board", boardCards.join()));
       return;
     default:
       return;

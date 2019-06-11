@@ -237,8 +237,15 @@ const issueKeyboardShortcut = (
       dispatch(change("card", "hero", heroRangeList[randomIndex]));
       return;
     case 77: //M
-      console.log("hero field", heroField);
       let boardCards = [];
+      for (let token of boardField.split(",")) {
+        if (fullDeck.includes(token)) {
+          boardCards.push(token);
+        }
+      }
+      if (boardCards.length === 5) {
+        boardCards = [];
+      }
       while (boardCards.length < 5) {
         let randomIndex = Math.floor(Math.random() * fullDeck.length);
         let randomCard = fullDeck[randomIndex];
@@ -249,7 +256,6 @@ const issueKeyboardShortcut = (
           boardCards.push(randomCard);
         }
       }
-      console.log("random board", boardCards.join());
       dispatch(change("card", "board", boardCards.join()));
       return;
     default:

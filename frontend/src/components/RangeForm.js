@@ -2,11 +2,12 @@ import React from "react";
 import { connect } from "react-redux";
 import { reduxForm } from "redux-form";
 import { scrollToWhen } from "react-redux-scroll";
-import { requestRangeSort, toggleHand } from "../actions";
+import { requestRangeSort, toggleHand, updateSlider } from "../actions";
 import FormTooltipRange from "./FormTooltipRange";
 import PolarizedCheckbox from "./PolarizedCheckbox";
 import Grid from "./Tile";
 
+const isFirefox = typeof InstallTrigger !== "undefined";
 const DISPLAY_SIZE_THRESHOLD = 260;
 
 const scrollable = scrollToWhen(
@@ -34,7 +35,9 @@ class RangeForm extends React.Component {
       title,
       player,
       street,
+      thresholds,
       handleClick,
+      handleWheel,
       handleSubmit,
       submitting,
       isCurrent,
@@ -135,7 +138,10 @@ class RangeForm extends React.Component {
     }
 
     return (
-      <div className={"range-form " + player}>
+      <div
+        className={"range-form " + player}
+        onWheel={e => handleWheel(e, player, street, thresholds)}
+      >
         <ScrollableDiv id={player + street} />
         <form
           onSubmit={handleSubmit(data => {
@@ -220,6 +226,45 @@ const mapDispatchToProps = dispatch => {
     initPreflopRange: () => {},
     handleClick: (player, street, hand) => {
       dispatch(toggleHand(player, street, hand));
+    },
+    // handleWheel: (player, street, values) => {
+    handleWheel: (e, player, street, thresholds) => {
+      if (!isFirefox) {
+        return;
+      }
+
+      e.preventDefault();
+
+      if (e.ctrlKey) {
+        let delta;
+        if (e.deltaY > 0) {
+          delta = 5;
+        } else {
+          delta = -5;
+        }
+        let newMin = thresholds[0] + delta;
+        newMin = Math.max(newMin, 0);
+        newMin = Math.min(newMin, thresholds[1]);
+
+        dispatch(updateSlider(player, street, [newMin, thresholds[1]]));
+        return;
+      }
+
+      if (e.shiftKey) {
+        let delta;
+        if (e.deltaX > 0) {
+          delta = 5;
+        } else {
+          delta = -5;
+        }
+        console.log("deltaX", e.deltaX);
+        let newMax = thresholds[1] + delta;
+        newMax = Math.min(newMax, 100);
+        newMax = Math.max(newMax, thresholds[0]);
+
+        dispatch(updateSlider(player, street, [thresholds[0], newMax]));
+        return;
+      }
     }
   };
 };
@@ -337,7 +382,8 @@ const mapStateToProps = (state, ownProps) => ({
     state.ranges[ownProps.player][ownProps.street].isPolarized || false,
   boardCards: state.ranges.knownCards.board,
   heroPercentile: state.ranges[ownProps.player][ownProps.street].heroPercentile,
-  description: state.ranges[ownProps.player][ownProps.street].description
+  description: state.ranges[ownProps.player][ownProps.street].description,
+  thresholds: state.ranges[ownProps.player][ownProps.street].thresholds
 });
 
 export default connect(

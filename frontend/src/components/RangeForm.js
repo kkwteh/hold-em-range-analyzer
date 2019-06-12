@@ -6,6 +6,7 @@ import { requestRangeSort, toggleHand, updateSlider } from "../actions";
 import FormTooltipRange from "./FormTooltipRange";
 import PolarizedCheckbox from "./PolarizedCheckbox";
 import Grid from "./Tile";
+import { ActiveListener } from "react-event-injector";
 
 const isFirefox = typeof InstallTrigger !== "undefined";
 const DISPLAY_SIZE_THRESHOLD = 260;
@@ -138,37 +139,36 @@ class RangeForm extends React.Component {
     }
 
     return (
-      <div
-        className={"range-form " + player}
-        onWheel={e => handleWheel(e, player, street, thresholds)}
-      >
-        <ScrollableDiv id={player + street} />
-        <form
-          onSubmit={handleSubmit(data => {
-            dispatch(requestRangeSort(player, street));
-          })}
-        >
-          <div className="range-form-div">
-            <span className="info-copy">{title}</span>
-            {boardDisplay}
-            {descriptionDisplay}
-          </div>
-          {sortRangeButton}
-          <div
-            className={
-              "range-form-div value-slider-field polarized-" + isPolarized
-            }
+      <ActiveListener onWheel={e => handleWheel(e, player, street, thresholds)}>
+        <div className={"range-form " + player}>
+          <ScrollableDiv id={player + street} />
+          <form
+            onSubmit={handleSubmit(data => {
+              dispatch(requestRangeSort(player, street));
+            })}
           >
-            <FormTooltipRange
-              player={player}
-              street={street}
-              defaultValue={sliderDefaultValues[street]}
-            />
-          </div>
-        </form>
-        {rangeDisplay}
-        {handGrid}
-      </div>
+            <div className="range-form-div">
+              <span className="info-copy">{title}</span>
+              {boardDisplay}
+              {descriptionDisplay}
+            </div>
+            {sortRangeButton}
+            <div
+              className={
+                "range-form-div value-slider-field polarized-" + isPolarized
+              }
+            >
+              <FormTooltipRange
+                player={player}
+                street={street}
+                defaultValue={sliderDefaultValues[street]}
+              />
+            </div>
+          </form>
+          {rangeDisplay}
+          {handGrid}
+        </div>
+      </ActiveListener>
     );
   }
 }
@@ -229,13 +229,12 @@ const mapDispatchToProps = dispatch => {
     },
     // handleWheel: (player, street, values) => {
     handleWheel: (e, player, street, thresholds) => {
-      if (!isFirefox) {
-        return;
-      }
-
-      e.preventDefault();
+      // if (!isFirefox) {
+      //   return;
+      // }
 
       if (e.ctrlKey) {
+        e.preventDefault();
         let delta;
         if (e.deltaY > 0) {
           delta = 5;
@@ -251,6 +250,7 @@ const mapDispatchToProps = dispatch => {
       }
 
       if (e.shiftKey) {
+        e.preventDefault();
         let delta;
         if (e.deltaX > 0) {
           delta = 5;

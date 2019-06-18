@@ -101,6 +101,26 @@ const mapStateToProps = (state, ownProps) => ({
   heroRange: state.ranges.hero.preflop.handStates || {}
 });
 
+const randomBoardCards = (boardField, heroField, numKeep) => {
+  let boardCards = [];
+  for (let token of boardField.split(",")) {
+    if (fullDeck.includes(token)) {
+      boardCards.push(token);
+    }
+  }
+  if (boardCards.length > numKeep) {
+    boardCards = boardCards.slice(0, numKeep);
+  }
+  while (boardCards.length < 5) {
+    let randomIndex = Math.floor(Math.random() * fullDeck.length);
+    let randomCard = fullDeck[randomIndex];
+    if (!heroField.includes(randomCard) && !boardCards.includes(randomCard)) {
+      boardCards.push(randomCard);
+    }
+  }
+  return boardCards;
+};
+
 const preflopRangeActions = {
   49: { range: [0, 80], desc: "Big blind unraised", player: "hero" }, //1
   81: { range: [0, 80], desc: "Big blind unraised", player: "opponent" }, //Q
@@ -195,6 +215,7 @@ const issueKeyboardShortcut = (
     return;
   }
 
+  let boardCards = [];
   switch (keyCode) {
     case 27: //Esc
       dispatch(resetHand());
@@ -237,25 +258,15 @@ const issueKeyboardShortcut = (
       dispatch(change("card", "hero", heroRangeList[randomIndex]));
       return;
     case 77: //M
-      let boardCards = [];
-      for (let token of boardField.split(",")) {
-        if (fullDeck.includes(token)) {
-          boardCards.push(token);
-        }
-      }
-      if (boardCards.length === 5) {
-        boardCards = [];
-      }
-      while (boardCards.length < 5) {
-        let randomIndex = Math.floor(Math.random() * fullDeck.length);
-        let randomCard = fullDeck[randomIndex];
-        if (
-          !heroField.includes(randomCard) &&
-          !boardCards.includes(randomCard)
-        ) {
-          boardCards.push(randomCard);
-        }
-      }
+      boardCards = randomBoardCards(boardField, heroField, 0);
+      dispatch(change("card", "board", boardCards.join()));
+      return;
+    case 188: //,
+      boardCards = randomBoardCards(boardField, heroField, 3);
+      dispatch(change("card", "board", boardCards.join()));
+      return;
+    case 190: //.
+      boardCards = randomBoardCards(boardField, heroField, 4);
       dispatch(change("card", "board", boardCards.join()));
       return;
     default:

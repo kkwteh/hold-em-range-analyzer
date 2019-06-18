@@ -2,7 +2,7 @@
   float: right;
   display: block;
   font-size: 10px;
-  font-family: 'Lucida Console', Monaco, monospace;
+  font-family: "Lucida Console", Monaco, monospace;
 }
 
 .author-elem {
@@ -26,7 +26,7 @@
 }
 
 .cardbox {
-  font-family: 'Lucida Console', Monaco, monospace;
+  font-family: "Lucida Console", Monaco, monospace;
   font-size: 22px;
   vertical-align: middle;
   display: inline-block;
@@ -79,7 +79,7 @@
 
 .info-copy {
   font-size: 15px;
-  font-family: 'Lucida Console', Monaco, monospace;
+  font-family: "Lucida Console", Monaco, monospace;
 }
 
 @media all and (max-width: 800px) {
@@ -99,7 +99,7 @@
 }
 
 .hand-list {
-  font-family: 'Lucida Console', Monaco, monospace;
+  font-family: "Lucida Console", Monaco, monospace;
   font-size: 11px;
 }
 
@@ -123,6 +123,10 @@
 
 .hand-state-hero {
   background-color: #ffdf44;
+}
+
+.hand-state-median {
+  background-color: rgb(139, 80, 222);
 }
 
 .suit-d,
@@ -169,7 +173,7 @@
 }
 
 .tile {
-  font-family: 'Lucida Console', Monaco, monospace;
+  font-family: "Lucida Console", Monaco, monospace;
   text-align: center;
   font-size: 11px;
   height: 14px;

@@ -46,6 +46,7 @@ class RangeForm extends React.Component {
       description,
       boardCards,
       topHands,
+      medianIndex,
       bestBlockers,
       rangeCount,
       heroPercentile
@@ -84,10 +85,13 @@ class RangeForm extends React.Component {
     let cardDisplay;
     cardDisplay = (
       <div className="hand-list">
-        {(topHands || []).map(([hand, handState]) => (
+        {(topHands || []).map(([hand, handState], index) => (
           <span
             key={hand}
-            className={"hand-state hand-state-" + handState}
+            className={
+              "hand-state hand-state-" +
+              (index === medianIndex ? "median" : handState)
+            }
             onClick={() => handleClick(player, street, hand)}
           >
             <span key={hand + hand[0]} className={"suit-" + hand[0][1]}>
@@ -281,6 +285,18 @@ const getTopHands = (sortedHands, handStates) => {
   return res;
 };
 
+const getMedianIndex = sortedHands => {
+  if (sortedHands === undefined) {
+    return undefined;
+  }
+
+  let medianIndex = Math.round(sortedHands.length / 2);
+  if (sortedHands.length > DISPLAY_SIZE_THRESHOLD) {
+    medianIndex = medianIndex - (sortedHands.length - DISPLAY_SIZE_THRESHOLD);
+  }
+  return medianIndex;
+};
+
 const getRangeCount = handStates => {
   if (handStates === undefined) {
     return;
@@ -367,6 +383,9 @@ const mapStateToProps = (state, ownProps) => ({
   topHands: getTopHands(
     state.ranges[ownProps.player][ownProps.street].sortedHands,
     state.ranges[ownProps.player][ownProps.street].handStates
+  ),
+  medianIndex: getMedianIndex(
+    state.ranges[ownProps.player][ownProps.street].sortedHands
   ),
   bestBlockers: getBestBlockerCards(
     ownProps.player,

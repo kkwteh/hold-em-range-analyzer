@@ -47,7 +47,6 @@ class RangeForm extends React.Component {
       boardCards,
       topHands,
       medianIndex,
-      bestBlockers,
       rangeCount,
       heroPercentile
     } = this.props;
@@ -110,7 +109,6 @@ class RangeForm extends React.Component {
       rangeDisplay = (
         <div className={"isCurrent-" + isCurrent}>
           {rangeCount}
-          {bestBlockers}
           {heroPercentileDisplay}
           {cardDisplay}
         </div>
@@ -386,11 +384,6 @@ const mapStateToProps = (state, ownProps) => ({
   ),
   medianIndex: getMedianIndex(
     state.ranges[ownProps.player][ownProps.street].sortedHands
-  ),
-  bestBlockers: getBestBlockerCards(
-    ownProps.player,
-    state.ranges[ownProps.player][ownProps.street].sortedHands,
-    state.ranges.knownCards.hero
   ),
   rangeCount: getRangeCount(
     state.ranges[ownProps.player][ownProps.street].handStates

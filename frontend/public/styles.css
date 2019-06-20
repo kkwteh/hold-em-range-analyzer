@@ -110,7 +110,7 @@
   padding-right: 2px;
 }
 .hand-state-on {
-  background-color: #9dff87;
+  background-color: rgb(197, 244, 201);
 }
 
 .hand-state-off {
@@ -118,7 +118,7 @@
 }
 
 .hand-state-blocked {
-  background-color: #ff8787;
+  background-color: #ffb1b1;
 }
 
 .hand-state-hero {
@@ -126,7 +126,7 @@
 }
 
 .hand-state-median {
-  background-color: rgb(139, 80, 222);
+  background-color: rgb(194, 164, 237);
 }
 
 .suit-d,
@@ -185,7 +185,7 @@
 }
 
 .tile-active {
-  background-color: #9dff87;
+  background-color: rgb(197, 244, 201);
 }
 
 .range-type-toggle {

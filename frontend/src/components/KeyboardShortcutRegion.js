@@ -103,9 +103,15 @@ const mapStateToProps = (state, ownProps) => ({
 
 const randomBoardCards = (boardField, heroField, numKeep) => {
   let boardCards = [];
-  for (let token of boardField.split(",")) {
-    if (fullDeck.includes(token)) {
-      boardCards.push(token);
+  let cardMatches = boardField.replace(/[,\s]/g, "").match(/.{1,2}/g);
+  let cards = [];
+  if (cardMatches !== null) {
+    cards = cardMatches.map(s => s[0].toUpperCase() + s[1].toLowerCase());
+  }
+
+  for (let card of cards) {
+    if (fullDeck.includes(card)) {
+      boardCards.push(card.toLowerCase());
     }
   }
   if (boardCards.length > numKeep) {
@@ -114,7 +120,10 @@ const randomBoardCards = (boardField, heroField, numKeep) => {
   while (boardCards.length < 5) {
     let randomIndex = Math.floor(Math.random() * fullDeck.length);
     let randomCard = fullDeck[randomIndex];
-    if (!heroField.includes(randomCard) && !boardCards.includes(randomCard)) {
+    if (
+      !heroField.toLowerCase().includes(randomCard.toLowerCase()) &&
+      !boardCards.includes(randomCard.toLowerCase())
+    ) {
       boardCards.push(randomCard);
     }
   }
@@ -255,19 +264,21 @@ const issueKeyboardShortcut = (
       dispatch(updateSlider("opponent", "turn", [0, 100]));
       dispatch(updateSlider("hero", "river", [0, 100]));
       dispatch(updateSlider("opponent", "river", [0, 100]));
-      dispatch(change("card", "hero", heroRangeList[randomIndex]));
+      dispatch(
+        change("card", "hero", heroRangeList[randomIndex].replace(/,/g, ""))
+      );
       return;
     case 77: //M
       boardCards = randomBoardCards(boardField, heroField, 0);
-      dispatch(change("card", "board", boardCards.join()));
+      dispatch(change("card", "board", boardCards.join("")));
       return;
     case 188: //,
       boardCards = randomBoardCards(boardField, heroField, 3);
-      dispatch(change("card", "board", boardCards.join()));
+      dispatch(change("card", "board", boardCards.join("")));
       return;
     case 190: //.
       boardCards = randomBoardCards(boardField, heroField, 4);
-      dispatch(change("card", "board", boardCards.join()));
+      dispatch(change("card", "board", boardCards.join("")));
       return;
     default:
       return;

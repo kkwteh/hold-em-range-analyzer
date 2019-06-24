@@ -19,10 +19,11 @@ type SortRequest struct {
 }
 
 type SortResponse struct {
-	AllHands    []sorter.HoleCards `json:"all_hands"`
-	HandClasses []string           `json:"hand_classes"`
-	HeroQ25     int                `json:"hero_q25"`
-	HeroQ75     int                `json:"hero_q75"`
+	AllHands     []sorter.HoleCards `json:"all_hands"`
+	HeroEquities []float64          `json:"hero_equities"`
+	HandClasses  []string           `json:"hand_classes"`
+	HeroQ25      int                `json:"hero_q25"`
+	HeroQ75      int                `json:"hero_q75"`
 }
 
 func main() {
@@ -55,7 +56,7 @@ func sortHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	resp := SortResponse{}
 
-	resp.AllHands, resp.HeroQ25, resp.HeroQ75 = sorter.SortRange(sortRequest.AllHands, sortRequest.BoardCards, sortRequest.HeroCards)
+	resp.AllHands, resp.HeroEquities, resp.HeroQ25, resp.HeroQ75 = sorter.SortRange(sortRequest.AllHands, sortRequest.BoardCards, sortRequest.HeroCards)
 
 	resp.HandClasses = sorter.ClassifyHands(resp.AllHands, sortRequest.BoardCards)
 

@@ -26,19 +26,18 @@ func (sr ScoredRange) Swap(i, j int)      { sr[i], sr[j] = sr[j], sr[i] }
 const numRunsToSort = 300
 const riverPercentileSortValue = 0.7
 
-//SortRange returns slice of hole cards sorted in ascending order by strength
-func SortRange(handRange []HoleCards, boardCards []string, heroCards HoleCards) ([]HoleCards, int, int) {
+//SortRange returns slice of hole cards sorted in ascending order by strength and equities
+func SortRange(handRange []HoleCards, boardCards []string, heroCards HoleCards) ([]HoleCards, []float64, int, int) {
 	if len(handRange) == 0 {
-		return []HoleCards{}, 0, 0
+		return []HoleCards{}, []float64{}, 0, 0
 	}
-
-	// Set number runs as 100. Fix the number of computations if it runs slow.
-	// numRunsToSort := int(math.Min(math.Round(10000.0/float64(len(handRange))), 100))
 
 	// handRanks contains the rankings of the hands for the random runouts that are played out belows
 	handRanks := make(map[HoleCards][]float64)
+	equityMap := make(map[HoleCards]float64)
 	for i := 0; i < len(handRange); i++ {
 		handRanks[handRange[i]] = make([]float64, 0, numRunsToSort)
+		equityMap[handRange[i]] = 0
 	}
 
 	var heroQ25, heroQ75 int
@@ -49,6 +48,21 @@ func SortRange(handRange []HoleCards, boardCards []string, heroCards HoleCards) 
 		sort.Sort(sort.Reverse(scoredRange))
 		// Normalize ranks by length of hand range
 		for j, shc := range scoredRange {
+
+			// If heroCard found in range, update equity map
+			if shc.Cards == heroCards {
+				heroScore := shc.Score
+				for _, scoredHoleCards := range scoredRange {
+					if scoredHoleCards.Score > heroScore {
+						equityMap[scoredHoleCards.Cards] += 1.0
+					}
+
+					if scoredHoleCards.Score == heroScore {
+						equityMap[scoredHoleCards.Cards] += 0.5
+					}
+				}
+			}
+
 			handRanks[shc.Cards] = append(handRanks[shc.Cards], float64(j*len(handRange))/float64(len(scoredRange)))
 		}
 	}
@@ -66,16 +80,23 @@ func SortRange(handRange []HoleCards, boardCards []string, heroCards HoleCards) 
 	finalScoredRange := make(ScoredRange, 0, len(handRange))
 	for _, hand := range handRange {
 		numRanks := float64(len(handRanks[hand]))
+
+		// Normalize hand equities by number of ranks
+		equityMap[hand] = equityMap[hand] / numRanks
+
 		score := handRanks[hand][int(math.Floor(riverPercentileSortValue*numRanks))]
 		finalScoredRange = append(finalScoredRange, ScoredHoleCards{Cards: hand, Score: uint32(score)})
 	}
 	sort.Sort(finalScoredRange)
 
-	res := make([]HoleCards, 0, len(handRange))
-	for _, scoredHand := range finalScoredRange {
-		res = append(res, scoredHand.Cards)
+	sortedHands := make([]HoleCards, 0, len(handRange))
+	equitiesArray := make([]float64, len(handRange))
+	for i, scoredHand := range finalScoredRange {
+		sortedHands = append(sortedHands, scoredHand.Cards)
+		equitiesArray[i] = equityMap[scoredHand.Cards]
 	}
-	return res, heroQ25, heroQ75
+
+	return sortedHands, equitiesArray, heroQ25, heroQ75
 }
 
 // ScoreHoleCards scores hole cards. Lower scores are better.

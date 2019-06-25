@@ -124,7 +124,7 @@ const randomBoardCards = (boardField, heroField, numKeep) => {
       !heroField.toLowerCase().includes(randomCard.toLowerCase()) &&
       !boardCards.includes(randomCard.toLowerCase())
     ) {
-      boardCards.push(randomCard);
+      boardCards.push(randomCard.toLowerCase());
     }
   }
   return boardCards;

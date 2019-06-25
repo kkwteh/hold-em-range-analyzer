@@ -48,7 +48,8 @@ class RangeForm extends React.Component {
       topHands,
       medianIndex,
       rangeCount,
-      heroPercentile
+      heroPercentile,
+      averageHeroEquity
     } = this.props;
 
     let polarizedCheckbox;
@@ -62,6 +63,15 @@ class RangeForm extends React.Component {
         <div className="range-form-div info-copy">
           Hero is ahead of {heroPercentile}% of {player}
           's range.
+        </div>
+      );
+    }
+
+    let heroEquityDisplay;
+    if (averageHeroEquity !== undefined) {
+      heroEquityDisplay = (
+        <div className="range-form-div info-copy">
+          Hero equity: {averageHeroEquity}%
         </div>
       );
     }
@@ -110,6 +120,7 @@ class RangeForm extends React.Component {
         <div className={"isCurrent-" + isCurrent}>
           {rangeCount}
           {heroPercentileDisplay}
+          {heroEquityDisplay}
           {cardDisplay}
         </div>
       );
@@ -397,20 +408,28 @@ const mapStateToProps = (state, ownProps) => ({
   description: state.ranges[ownProps.player][ownProps.street].description,
   thresholds: state.ranges[ownProps.player][ownProps.street].thresholds,
   averageHeroEquity: computeAverageHeroEquity(
+    ownProps.player,
     state.ranges[ownProps.player][ownProps.street].sortedHands,
     state.ranges[ownProps.player][ownProps.street].heroEquities,
     state.ranges[ownProps.player][ownProps.street].handStates
   )
 });
 
-const computeAverageHeroEquity = (sortedHands, heroEquities, handStates) => {
+const computeAverageHeroEquity = (
+  player,
+  sortedHands,
+  heroEquities,
+  handStates
+) => {
   if (
     sortedHands === undefined ||
     heroEquities === undefined ||
-    handStates === undefined
+    handStates === undefined ||
+    player === "hero"
   ) {
-    return 0;
+    return undefined;
   }
+
   let count = 0;
   let totalEquity = 0;
   for (let [index, hand] of sortedHands.entries()) {
@@ -420,7 +439,7 @@ const computeAverageHeroEquity = (sortedHands, heroEquities, handStates) => {
     }
   }
   console.log("avg equity", totalEquity / count);
-  return totalEquity / count;
+  return Math.round((totalEquity / count) * 1000) / 10;
 };
 
 export default connect(

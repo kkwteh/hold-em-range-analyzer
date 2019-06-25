@@ -119,7 +119,6 @@ class RangeForm extends React.Component {
       rangeDisplay = (
         <div className={"isCurrent-" + isCurrent}>
           {rangeCount}
-          {heroPercentileDisplay}
           {heroEquityDisplay}
           {cardDisplay}
         </div>

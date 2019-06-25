@@ -701,6 +701,7 @@ const ranges = (state = defaultState, action) => {
       let heroIndex = action.body.all_hands.findIndex(handMatch(heroCards));
 
       let sortedHands = action.body.all_hands.slice();
+      let heroEquities = action.body.hero_equities.slice();
       let handClasses = {};
       let handStates = {};
       for (let i = 0; i < sortedHands.length; i++) {
@@ -710,6 +711,7 @@ const ranges = (state = defaultState, action) => {
 
       newState[action.player][action.street].sortedHands = sortedHands;
       newState[action.player][action.street].handClasses = handClasses;
+      newState[action.player][action.street].heroEquities = heroEquities;
 
       categorizeHands(
         handStates,

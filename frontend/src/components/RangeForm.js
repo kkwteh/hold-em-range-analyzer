@@ -395,8 +395,33 @@ const mapStateToProps = (state, ownProps) => ({
   boardCards: state.ranges.knownCards.board,
   heroPercentile: state.ranges[ownProps.player][ownProps.street].heroPercentile,
   description: state.ranges[ownProps.player][ownProps.street].description,
-  thresholds: state.ranges[ownProps.player][ownProps.street].thresholds
+  thresholds: state.ranges[ownProps.player][ownProps.street].thresholds,
+  averageHeroEquity: computeAverageHeroEquity(
+    state.ranges[ownProps.player][ownProps.street].sortedHands,
+    state.ranges[ownProps.player][ownProps.street].heroEquities,
+    state.ranges[ownProps.player][ownProps.street].handStates
+  )
 });
+
+const computeAverageHeroEquity = (sortedHands, heroEquities, handStates) => {
+  if (
+    sortedHands === undefined ||
+    heroEquities === undefined ||
+    handStates === undefined
+  ) {
+    return 0;
+  }
+  let count = 0;
+  let totalEquity = 0;
+  for (let [index, hand] of sortedHands.entries()) {
+    if (handStates[hand] === "on") {
+      count += 1;
+      totalEquity += heroEquities[index];
+    }
+  }
+  console.log("avg equity", totalEquity / count);
+  return totalEquity / count;
+};
 
 export default connect(
   mapStateToProps,

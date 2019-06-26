@@ -79,7 +79,7 @@ const mapStateToProps = (state, ownProps) => {
         color: "goldenrod",
         fontFamily: '"Lucida Console", Monaco, monospace'
       },
-      label: <strong>{Math.round(heroPct * 10) / 10}%</strong>
+      label: <strong>hero {Math.round(heroPct * 10) / 10}%</strong>
     };
   }
   return {

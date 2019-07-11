@@ -21,7 +21,7 @@
     "react-pure-lifecycle": "^3.0.0",
     "react-redux": "^5.0.7",
     "react-redux-scroll": "^0.1.2",
-    "react-scripts": "^2.0.0",
+    "react-scripts": "^3.0.1",
     "redux": "^3.5.2",
     "redux-form": "^7.4.2",
     "redux-logger": "^3.0.6",

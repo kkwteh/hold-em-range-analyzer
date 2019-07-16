@@ -99,7 +99,7 @@ export const requestRangeSort = (player, street) => (dispatch, getState) => {
     return fetch(
       process.env.NODE_ENV === "production"
         ? "https://thawing-everglades-88893.herokuapp.com/sortcards"
-        : "http://127.0.0.1:8001/sortcards",
+        : "http://localhost:8001/sortcards",
       {
         method: "POST",
         mode: "cors",

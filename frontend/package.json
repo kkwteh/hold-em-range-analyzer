@@ -6,7 +6,7 @@
     "prettier": "1.14.3"
   },
   "dependencies": {
-    "ajv": "^6.5.4",
+    "ajv": "^6.12.3",
     "browserslist": "^4.3.4",
     "card-deck": "^1.0.0",
     "cross-fetch": "^2.2.2",
